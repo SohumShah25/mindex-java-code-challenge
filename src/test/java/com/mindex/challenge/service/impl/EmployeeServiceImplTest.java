@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static jdk.nashorn.internal.objects.NativeJava.type;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -47,9 +48,14 @@ public class EmployeeServiceImplTest {
         testEmployee.setLastName("Doe");
         testEmployee.setDepartment("Engineering");
         testEmployee.setPosition("Developer");
+        testEmployee.setEmployeeId("234");
 
         // Create checks
         Employee createdEmployee = restTemplate.postForEntity(employeeUrl, testEmployee, Employee.class).getBody();
+
+        System.out.println("created Employee" + createdEmployee);
+        System.out.println("employee id:" + testEmployee.getEmployeeId());
+        System.out.println("create employee id:" + createdEmployee.getEmployeeId());
 
         assertNotNull(createdEmployee.getEmployeeId());
         assertEmployeeEquivalence(testEmployee, createdEmployee);
