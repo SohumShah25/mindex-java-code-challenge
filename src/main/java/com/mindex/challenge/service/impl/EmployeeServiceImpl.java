@@ -46,15 +46,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findByEmployeeId(id);
 
         if (employee == null) {
-            throw new RuntimeException("Employee ID cannot be null");
+            throw new RuntimeException("Employee cannot be found");
         }
 
         return employee;
     }
 
     /**
-     * @param employee
-     * @return
+     * This method is used to update the Employee Structure
+     * @param employee is the current Employee
+     * @return It is updating the employee in the Employee Database
      */
     @Override
     public Employee update(Employee employee) {
@@ -69,8 +70,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * @param id
-     * @return
+     * Creating a Reporting structure for an employee
+     * @param id Employee Id
+     * @return Reporting structure
      */
     @Override
     public ReportingStructure report(String id) {
@@ -81,59 +83,37 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         LOG.debug("Creating reporting structure for employee with id [{}]", id);
 
-        Employee employee = findEmployee(id);
+        Employee employee = read(id);
         int numberOfReports = getNumberOfReports(employee);
 
         return new ReportingStructure(employee, numberOfReports);
     }
 
 
-    /* Method to retrieve an employee's details from the database based on their ID - triggers a runtime exception
-    if the employee is not located */
 
     /**
-     * @param id
-     * @return
+     * Method to dynamically calculate the count of immediate subordinates for an employee
+     * @param employee Current Employee whose direct reports are to be found
+     * @return Number of Reports
      */
-    @Override
-    public Employee findEmployee(String id){
-        Employee employee = employeeRepository.findByEmployeeId(id);
-        if(employee == null){
-            throw new RuntimeException("Employee ID cannot be null");
-        }
-        return employee;
-    }
 
-    /**
-     * @param employee
-     * @return
-     */
-    //Method to dynamically calculate the count of immediate subordinates for an employee
-    private int getNumberOfReports(Employee employee){
+    private int getNumberOfReports(Employee employee) {
         Stack<Employee> stack = new Stack<>();
         stack.push(employee);
-        int reportSum =0;
+        int reportSum = 0;
 
-        while (!stack.isEmpty()){
+        while (!stack.isEmpty()) {
             Employee currentEmployee = stack.pop();
-            List <Employee> currentReports = currentEmployee.getDirectReports();
+            List<Employee> currentReports = currentEmployee.getDirectReports();
 
-            if(currentReports!=null){
+            if (currentReports != null && !currentReports.isEmpty()) {
                 reportSum += currentReports.size();
 
-                for(Employee e : currentReports){
-                    try{
-                        Employee foundEmployee = findEmployee(e.getEmployeeId());
-                        stack.push(foundEmployee);
-                    }catch(RuntimeException ex){
-                        /*Ignore - if the employee is not present in the database,
-                         *avoid traversing their list of direct reports, as it's not possible
-                         *to iterate through their reports. In such cases, consider them as a terminal node.
-                         */
-                    }
+                for (Employee e : currentReports) {
+                    Employee foundEmployee = read(e.getEmployeeId());
+                    stack.push(foundEmployee);
                 }
             }
-
         }
         return reportSum;
     }

@@ -57,9 +57,7 @@ public class Employee {
         this.department = department;
     }
 
-    public List<Employee> getDirectReports() {
-        return directReports;
-    }
+    public List<Employee> getDirectReports() {return directReports;}
 
     public void setDirectReports(List<Employee> directReports) {
         this.directReports = directReports;

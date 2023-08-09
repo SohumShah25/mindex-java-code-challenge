@@ -17,19 +17,26 @@ public class CompensationServiceImpl implements CompensationService {
     private CompensationRepository compensationRepository;
 
     /**
-     * @param compensation
-     * @return
+     * It will save the Compensation Structure in the database
+     * @param compensation Compensation Structure of an Employee
+     * @return Compensation
      */
     @Override
     public Compensation create(Compensation compensation) {
         LOG.debug("Creating compensation [{}]", compensation);
+        if (compensation == null) {
+            LOG.debug("Please enter Compensation: ");
+            return null;
+        }
+
         compensationRepository.insert(compensation);
         return compensation;
     }
 
     /**
-     * @param id
-     * @return
+     * It is fetching Compensation of an Employee from the database
+     * @param id EmployeeID
+     * @return Compensation
      */
     @Override
     public Compensation read(String id) {
@@ -38,7 +45,7 @@ public class CompensationServiceImpl implements CompensationService {
         Compensation compensation = compensationRepository.findByEmployeeId(id);
 
         if (compensation == null) {
-            throw new RuntimeException("Invalid employeeId: " + id);
+            LOG.debug("Compensation cannot be found for EmployeeId: " + id);
         }
 
         return compensation;

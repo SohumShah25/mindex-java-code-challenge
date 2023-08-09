@@ -8,5 +8,5 @@ public interface EmployeeService {
     Employee read(String id);
     Employee update(Employee employee);
     ReportingStructure report(String id);
-    Employee findEmployee(String id);
+
 }
